@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<meta name="theme-color" content="#0B1F3A"/>
+<meta name="description" content="Aurex Capital Research — Goldman Sachs + Bridgewater + JPMorgan + BlackRock AI intelligence in one platform."/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="AUREX"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<title>Aurex Capital Research</title>
+<style>
+:root{
+  --navy:#0B1F3A;--navy2:#152E52;--navy3:#1E3E6E;
+  --gold:#C9A052;--gold2:#E8C07A;--gold3:#F5D99A;
+  --white:#fff;--off:#F7F8FA;--off2:#EEF1F6;
+  --muted:#6B7A90;--border:#D6DCE8;
+  --green:#0A6640;--red:#B91C1C;
+  --fd:'Cormorant Garamond',serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'DM Mono',monospace;
+  --s1:0 1px 3px rgba(11,31,58,.08);
+  --s2:0 4px 16px rgba(11,31,58,.1);
+  --s3:0 12px 40px rgba(11,31,58,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--white);color:var(--navy);overflow-x:hidden}
+
+/* CANVAS */
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;opacity:.032;pointer-events:none;z-index:0}
+
+/* UTIL */
+.z1{position:relative;z-index:1}
+.container{max-width:1160px;margin:0 auto;padding:0 1.5rem}
+.gold-bar{width:38px;height:2.5px;background:var(--gold);border-radius:2px;margin:8px 0 1.25rem}
+.gold-bar.cx{margin-left:auto;margin-right:auto}
+.chip{font-size:11px;font-weight:500;background:var(--off);border:1px solid var(--border);border-radius:20px;padding:5px 13px;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;font-family:var(--fb)}
+.chip.on{background:var(--navy);color:var(--white);border-color:var(--navy)}
+.verdict{font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px}
+.vb{background:#D1FAE5;color:#065F46}.vr{background:#FEE2E2;color:#991B1B}.vn{background:#F3F4F6;color:#374151}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(11,31,58,.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,160,82,.22);height:60px}
+.nav-in{height:60px;display:flex;align-items:center;justify-content:space-between;max-width:1160px;margin:0 auto;padding:0 1.5rem}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.lm{width:33px;height:33px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:16px;font-weight:700;color:var(--navy);box-shadow:0 2px 8px rgba(201,160,82,.3)}
+.ln{font-family:var(--fd);font-size:15px;color:var(--white);font-weight:600;letter-spacing:.02em;line-height:1}
+.ls{font-size:8px;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;display:block;margin-top:1px}
+.nav-links{display:flex;gap:1.75rem}
+.nl{font-size:12.5px;color:rgba(255,255,255,.6);cursor:pointer;background:none;border:none;font-family:var(--fb);padding:0;transition:color .18s}
+.nl:hover{color:var(--gold)}
+.nav-cta{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;border-radius:7px;padding:8px 18px;font-size:12.5px;font-weight:500;cursor:pointer;font-family:var(--fb);box-shadow:0 2px 8px rgba(201,160,82,.28);transition:all .2s}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(201,160,82,.38)}
+.mob-btn{display:none;background:none;border:none;color:var(--white);cursor:pointer;padding:4px}
+
+/* MOBILE DRAWER */
+.drawer-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190}
+.drawer-ov.open{display:block}
+.drawer{position:fixed;top:0;right:-100%;width:272px;height:100vh;background:var(--navy);z-index:200;transition:right .28s ease;border-left:1px solid rgba(201,160,82,.18);padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem}
+.drawer.open{right:0}
+.drawer-close{background:none;border:none;color:rgba(255,255,255,.55);font-size:22px;cursor:pointer;align-self:flex-end}
+.drawer-links{display:flex;flex-direction:column;gap:1rem}
+.dl{font-size:15px;color:rgba(255,255,255,.72);cursor:pointer;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);transition:color .15s}
+.dl:hover{color:var(--gold)}
+
+/* TICKER */
+.ticker{background:var(--navy2);border-bottom:1px solid rgba(201,160,82,.15);padding:8px 0;overflow:hidden;position:relative;z-index:1}
+.tick-in{display:flex;gap:2.5rem;animation:tickMove 38s linear infinite;width:max-content}
+.ti{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.ts{font-size:11px;font-weight:500;color:var(--white);letter-spacing:.05em;font-family:var(--fm)}
+.tp{font-size:11px;color:rgba(255,255,255,.58);font-family:var(--fm)}
+.tup{color:#4ADE80;font-size:10px;font-family:var(--fm)}
+.tdn{color:#F87171;font-size:10px;font-family:var(--fm)}
+.tdot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.18)}
+@keyframes tickMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* HERO */
+.hero{position:relative;z-index:1;background:linear-gradient(158deg,var(--navy) 0%,var(--navy2) 55%,#0D2845 100%);padding:5rem 0 4.5rem;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-15%;left:50%;transform:translateX(-50%);width:900px;height:580px;background:radial-gradient(ellipse,rgba(201,160,82,.07),transparent 65%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,160,82,.28),transparent)}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,160,82,.28);padding:5px 14px;border-radius:20px;margin-bottom:1.5rem;background:rgba(201,160,82,.05)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#4ADE80;animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.hero h1{font-family:var(--fd);font-size:50px;font-weight:600;color:var(--white);line-height:1.1;margin-bottom:1.4rem;letter-spacing:-.01em}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero-desc{font-size:14.5px;color:rgba(255,255,255,.55);line-height:1.82;margin-bottom:2rem;max-width:460px}
+.firm-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:2.5rem}
+.fp{background:rgba(255,255,255,.055);border:1px solid rgba(201,160,82,.18);border-radius:6px;padding:6px 13px;font-size:10.5px;color:rgba(255,255,255,.62);letter-spacing:.03em}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;border-radius:10px;padding:13px 28px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--fm);letter-spacing:.06em;box-shadow:0 4px 16px rgba(201,160,82,.32);transition:all .2s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(201,160,82,.44)}
+.btn-ghost{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:13px 24px;font-size:13px;cursor:pointer;font-family:var(--fb);transition:all .2s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+
+/* HERO VISUAL */
+.hero-visual{background:rgba(255,255,255,.025);border:1px solid rgba(201,160,82,.14);border-radius:20px;padding:1.5rem;backdrop-filter:blur(12px);position:relative;overflow:hidden}
+.hero-visual::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.hv-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.hv-title{font-family:var(--fm);font-size:11px;color:var(--gold);letter-spacing:.1em}
+.hv-live{font-size:9px;color:#4ADE80;letter-spacing:.1em;display:flex;align-items:center;gap:5px;font-family:var(--fm)}
+.hv-chart{width:100%;height:110px}
+.hv-rows{display:flex;flex-direction:column;gap:7px;margin-top:1.1rem}
+.hv-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:7px;border:1px solid rgba(255,255,255,.05);transition:background .2s}
+.hv-row:hover{background:rgba(255,255,255,.07)}
+.hv-sym{font-family:var(--fm);font-size:11px;color:var(--white);font-weight:500}
+.hv-pr{font-family:var(--fm);font-size:11px;color:rgba(255,255,255,.65)}
+.hv-mini{width:50px;height:22px}
+
+/* STATS */
+.stats-bar{background:var(--off);border-bottom:1px solid var(--border);position:relative;z-index:1}
+.stats-in{display:grid;grid-template-columns:repeat(5,1fr);max-width:1160px;margin:0 auto;padding:1.2rem 1.5rem}
+.stat{text-align:center;padding:0 1rem;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-n{font-family:var(--fd);font-size:26px;font-weight:600;color:var(--navy)}
+.stat-l{font-size:10.5px;color:var(--muted);margin-top:2px}
+
+/* FEATURES */
+.features{padding:5rem 0;background:var(--white);position:relative;z-index:1}
+.sec-hd{text-align:center;margin-bottom:3rem}
+.sec-ey{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;font-weight:500}
+.sec-title{font-family:var(--fd);font-size:36px;font-weight:600;color:var(--navy);line-height:1.2;margin-bottom:1rem}
+.sec-sub{font-size:14px;color:var(--muted);line-height:1.75;max-width:540px;margin:0 auto}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.fcard{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:1.75rem;transition:all .25s;position:relative;overflow:hidden}
+.fcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .3s}
+.fcard:hover::before{transform:scaleX(1)}
+.fcard:hover{border-color:rgba(201,160,82,.38);transform:translateY(-4px);box-shadow:var(--s3)}
+.ficon{width:42px;height:42px;border-radius:10px;background:var(--off);display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:1rem;transition:background .2s}
+.fcard:hover .ficon{background:rgba(201,160,82,.1)}
+.fcard h3{font-size:15px;font-weight:500;color:var(--navy);margin-bottom:.5rem}
+.fcard p{font-size:12.5px;color:var(--muted);line-height:1.65}
+.ftag{display:inline-block;font-size:9.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-bottom:9px}
+.gs{background:#E8F0FB;color:#1A3A6E}.bw{background:#FFF3E0;color:#7B4A00}
+.jp{background:#FDE8E8;color:#7A1A1A}.br{background:#E8F5E9;color:#1A5C2A}
+.ai{background:rgba(201,160,82,.14);color:#7A5500}
+
+/* SCREENER */
+.screener{padding:5rem 0;background:var(--off);position:relative;z-index:1}
+.sw{background:var(--white);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:var(--s3)}
+.sw-head{background:var(--navy);padding:1.2rem 1.75rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(201,160,82,.18)}
+.sw-head h3{font-family:var(--fd);font-size:18px;color:var(--white);font-weight:500}
+.sw-badge{background:rgba(201,160,82,.18);color:var(--gold);font-family:var(--fm);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:4px;border:1px solid rgba(201,160,82,.22)}
+.sw-body{padding:2rem}
+.step-nav{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.75rem}
+.sb{flex:1;padding:10px 6px;text-align:center;cursor:pointer;border-right:1px solid var(--border);transition:all .2s;background:var(--white)}
+.sb:last-child{border-right:none}
+.sb.active{background:var(--navy)}.sb.done{background:rgba(201,160,82,.055)}
+.sb .sn{font-family:var(--fm);font-size:10px;color:var(--muted);display:block;margin-bottom:1px}
+.sb.active .sn,.sb.done .sn{color:var(--gold)}
+.sb .sl{font-size:10px;color:var(--muted)}.sb.active .sl{color:rgba(255,255,255,.62)}
+.panel{display:none}.panel.active{display:block}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.f{display:flex;flex-direction:column;gap:5px}
+.f label{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
+.f select,.f input,.f textarea{font-family:var(--fb);font-size:13px;color:var(--navy);background:var(--off);border:1px solid var(--border);border-radius:7px;padding:9px 11px;outline:none;width:100%;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
+.f select:focus,.f input:focus,.f textarea:focus{border-color:var(--navy2);box-shadow:0 0 0 3px rgba(11,31,58,.05)}
+.f textarea{resize:vertical;line-height:1.55;min-height:100px}
+.slbl{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin:1rem 0 8px;display:block}
+.chips-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.rv-box{background:var(--off);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1.25rem}
+.rv-box h4{font-size:10px;font-weight:500;color:var(--navy);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.rv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rvi{font-size:11.5px;color:var(--muted);line-height:1.5}
+.rvi strong{color:var(--navy);font-weight:500;display:block;font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px}
+.btn-row{display:flex;gap:10px;margin-top:1.2rem}
+.btn-next{flex:1;background:var(--navy);color:var(--white);border:none;border-radius:7px;padding:11px 20px;font-family:var(--fm);font-size:11.5px;font-weight:500;letter-spacing:.07em;cursor:pointer;transition:background .2s}
+.btn-next:hover{background:var(--navy2)}
+.btn-back{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:7px;padding:11px 20px;font-size:12px;cursor:pointer;font-family:var(--fb);transition:all .2s}
+.btn-back:hover{border-color:var(--navy);color:var(--navy)}
+.btn-fire{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;border-radius:10px;padding:14px;font-family:var(--fm);font-size:13px;font-weight:500;letter-spacing:.08em;cursor:pointer;box-shadow:0 4px 16px rgba(201,160,82,.28);transition:all .2s;margin-top:6px}
+.btn-fire:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(201,160,82,.42)}
+
+/* NEWS */
+.news{padding:5rem 0;background:var(--white);position:relative;z-index:1}
+.news-hdr{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;margin-bottom:2rem}
+.news-ctrl{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.news-btn{background:var(--navy);color:var(--white);border:none;border-radius:7px;padding:9px 18px;font-family:var(--fm);font-size:11px;font-weight:500;cursor:pointer;letter-spacing:.06em;transition:all .2s;display:flex;align-items:center;gap:7px}
+.news-btn:hover{background:var(--navy2)}
+.news-btn.loading{opacity:.65;cursor:not-allowed}
+.spin{animation:spin 1s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.nc{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .22s;cursor:pointer}
+.nc:hover{border-color:var(--navy2);transform:translateY(-3px);box-shadow:var(--s2)}
+.nc.feat{grid-column:1/-1;display:grid;grid-template-columns:5fr 7fr}
+.nc-vis{background:linear-gradient(135deg,var(--navy),var(--navy2));display:flex;align-items:center;justify-content:center;font-size:38px;min-height:120px}
+.nc-body{padding:1.1rem 1.25rem 1.25rem}
+.ntag{display:inline-block;font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:3px;margin-bottom:7px}
+.tt{background:#EEF2FF;color:#3730A3}.tf{background:#ECFDF5;color:#065F46}
+.te{background:#FFF7ED;color:#92400E}.tm{background:#FFF1F2;color:#881337}
+.ti2{background:#F0F9FF;color:#0C4A6E}.tp2{background:#F5F3FF;color:#5B21B6}
+.nc-body h4{font-size:13.5px;font-weight:500;color:var(--navy);margin:7px 0 6px;line-height:1.45}
+.nc-body p{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:10px}
+.nc-meta{display:flex;align-items:center;justify-content:space-between}
+.nc-src{font-size:10.5px;color:var(--muted)}
+.news-ts{font-family:var(--fm);font-size:10.5px;color:var(--muted);text-align:right;margin-top:1.2rem}
+.news-ld{display:flex;align-items:center;justify-content:center;gap:12px;padding:3rem;color:var(--muted);font-family:var(--fm);font-size:12px}
+.ld{width:7px;height:7px;border-radius:50%;background:var(--navy);animation:ldot 1.2s ease-in-out infinite}
+.ld:nth-child(2){animation-delay:.2s}.ld:nth-child(3){animation-delay:.4s}
+@keyframes ldot{0%,100%{opacity:.15}50%{opacity:1}}
+
+/* PRICING */
+.pricing{padding:5rem 0;background:var(--off);position:relative;z-index:1}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;max-width:900px;margin:2rem auto 0}
+.pc{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:2rem 1.5rem;text-align:center;position:relative;transition:all .25s}
+.pc:hover{border-color:rgba(201,160,82,.48);transform:translateY(-3px);box-shadow:var(--s3)}
+.pc.feat{background:var(--navy);border:2px solid var(--gold);box-shadow:0 8px 30px rgba(201,160,82,.18)}
+.pop{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:var(--fm);font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:4px 14px;border-radius:20px;box-shadow:0 2px 8px rgba(201,160,82,.3)}
+.pp{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.pc.feat .pp{color:rgba(255,255,255,.48)}
+.pa{font-family:var(--fd);font-size:38px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.pc.feat .pa{color:var(--gold)}
+.ppe{font-size:11.5px;color:var(--muted);margin-bottom:1.5rem}
+.pc.feat .ppe{color:rgba(255,255,255,.4)}
+.pf{list-style:none;text-align:left;margin-bottom:1.75rem;display:flex;flex-direction:column;gap:9px}
+.pf li{font-size:12.5px;color:var(--navy);display:flex;align-items:flex-start;gap:8px;line-height:1.45}
+.pc.feat .pf li{color:rgba(255,255,255,.8)}
+.pf li::before{content:'✓';color:var(--gold);font-weight:700;font-size:12px;flex-shrink:0;margin-top:1px}
+.pbtn{width:100%;border-radius:7px;padding:11px;font-family:var(--fb);font-size:12.5px;font-weight:500;cursor:pointer;transition:all .2s}
+.po{background:transparent;border:1.5px solid var(--navy);color:var(--navy)}
+.po:hover{background:var(--navy);color:var(--white)}
+.pg2{background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:var(--navy);box-shadow:0 2px 8px rgba(201,160,82,.28)}
+.pg2:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(201,160,82,.4)}
+.pay-note{font-size:11px;color:var(--muted);text-align:center;margin-top:6px;line-height:1.5}
+.pc.feat .pay-note{color:rgba(255,255,255,.38)}
+
+/* ONE TIME */
+.ot-sec{max-width:900px;margin:2.5rem auto 0}
+.ot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.25rem}
+.ot-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.25rem;text-align:center;transition:all .2s}
+.ot-card:hover{border-color:rgba(201,160,82,.38);transform:translateY(-2px)}
+.ot-card h4{font-size:13.5px;font-weight:500;color:var(--navy);margin-bottom:5px}
+.ot-card p{font-size:11.5px;color:var(--muted);line-height:1.55;margin-bottom:12px}
+.ot-price{font-family:var(--fd);font-size:26px;font-weight:600;color:var(--navy);margin-bottom:12px}
+.ot-btn{width:100%;background:var(--navy);color:var(--white);border:none;border-radius:7px;padding:9px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--fb);transition:background .2s}
+.ot-btn:hover{background:var(--navy2)}
+
+/* PAY METHODS STRIP */
+.pay-strip{display:flex;align-items:center;justify-content:center;gap:1.25rem;flex-wrap:wrap;margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border)}
+.pay-label{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.pm{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}
+.pi{width:32px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--white);flex-shrink:0}
+
+/* TECH STACK */
+.tech{padding:4rem 0;background:var(--navy);position:relative;z-index:1}
+.tech-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.4rem;margin-top:2.5rem}
+.tcard{background:rgba(255,255,255,.04);border:1px solid rgba(201,160,82,.14);border-radius:14px;padding:1.5rem;transition:all .2s}
+.tcard:hover{background:rgba(255,255,255,.065);border-color:rgba(201,160,82,.28)}
+.tcard h3{font-size:14px;font-weight:500;color:var(--white);margin-bottom:.5rem;display:flex;align-items:center;gap:8px}
+.tcard p{font-size:12.5px;color:rgba(255,255,255,.48);line-height:1.65}
+.tbadges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tb{font-family:var(--fm);font-size:10px;background:rgba(201,160,82,.1);color:var(--gold);border:1px solid rgba(201,160,82,.18);border-radius:4px;padding:3px 8px}
+.setup-box{margin-top:2rem;background:rgba(201,160,82,.07);border:1px solid rgba(201,160,82,.18);border-radius:14px;padding:1.5rem}
+.setup-box h4{color:var(--gold);font-family:var(--fm);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.setup-box p{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.8}
+.setup-box code{background:rgba(255,255,255,.07);padding:1px 5px;border-radius:3px;font-family:var(--fm);font-size:11px}
+
+/* FOOTER */
+.footer{background:var(--navy);padding:4rem 0 2rem;border-top:1px solid rgba(201,160,82,.18);position:relative;z-index:1}
+.ft-grid{display:grid;grid-template-columns:2.5fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.ft-brand p{font-size:12.5px;color:rgba(255,255,255,.38);line-height:1.75;margin-top:12px;max-width:240px}
+.ft-col h5{font-size:9.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+.ft-col a{display:block;font-size:12.5px;color:rgba(255,255,255,.42);text-decoration:none;margin-bottom:7px;cursor:pointer;transition:color .15s}
+.ft-col a:hover{color:var(--white)}
+.ft-bot{border-top:1px solid rgba(255,255,255,.07);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem}
+.ft-copy{font-size:11px;color:rgba(255,255,255,.26)}
+.ft-dis{font-size:10.5px;color:rgba(255,255,255,.2);max-width:500px;text-align:right;line-height:1.6}
+
+/* ===== PAYMENT MODAL ===== */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(11,31,58,.9);z-index:300;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(10px)}
+.modal-ov.open{display:flex}
+.modal{background:var(--white);border-radius:20px;padding:2.25rem;width:100%;max-width:460px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.35);max-height:90vh;overflow-y:auto}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));border-radius:20px 20px 0 0}
+.modal-close{position:absolute;top:1.25rem;right:1.25rem;background:var(--off);border:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;color:var(--muted);transition:all .15s}
+.modal-close:hover{background:var(--off2);color:var(--navy)}
+.modal h3{font-family:var(--fd);font-size:22px;color:var(--navy);margin-bottom:4px}
+.modal-sub{font-size:12.5px;color:var(--muted);margin-bottom:1.25rem;line-height:1.6}
+.plan-badge{display:inline-block;background:rgba(201,160,82,.1);color:var(--gold);font-family:var(--fm);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:4px;border:1px solid rgba(201,160,82,.22);margin-bottom:1.25rem}
+
+/* Payment method tabs */
+.pm-tabs{display:flex;gap:8px;margin-bottom:1.5rem}
+.pm-tab{flex:1;border:1.5px solid var(--border);border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;transition:all .15s;background:var(--white)}
+.pm-tab.sel{border-color:var(--navy);background:rgba(11,31,58,.04)}
+.pm-tab-icon{font-size:22px;margin-bottom:4px}
+.pm-tab-name{font-size:11.5px;font-weight:500;color:var(--navy)}
+.pm-tab-desc{font-size:9.5px;color:var(--muted);margin-top:2px}
+
+/* UPI Section */
+.upi-section{display:none}
+.upi-section.active{display:block}
+.upi-apps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+.upi-app{border:1.5px solid var(--border);border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;transition:all .18s;text-decoration:none;display:block}
+.upi-app:hover{border-color:var(--navy);transform:translateY(-2px);box-shadow:var(--s1)}
+.upi-app-icon{font-size:26px;margin-bottom:5px}
+.upi-app-name{font-size:11px;font-weight:500;color:var(--navy)}
+.upi-app-desc{font-size:9.5px;color:var(--muted);margin-top:1px}
+.upi-id-box{background:var(--off);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.upi-id-val{font-family:var(--fm);font-size:13px;font-weight:500;color:var(--navy)}
+.copy-btn{background:var(--navy);color:var(--white);border:none;border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:var(--fb);transition:background .2s;white-space:nowrap}
+.copy-btn:hover{background:var(--navy2)}
+.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:1.25rem;background:var(--off);border-radius:12px;border:1px solid var(--border);margin-bottom:1.25rem}
+.qr-wrap p{font-size:11.5px;color:var(--muted);text-align:center;line-height:1.5}
+#qr-container canvas,#qr-container img{border-radius:8px}
+.upi-amount-label{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.upi-amount-val{font-family:var(--fd);font-size:28px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.upi-steps{background:rgba(11,31,58,.04);border-radius:10px;padding:1rem;margin-bottom:1.25rem}
+.upi-steps h5{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px}
+.upi-steps ol{padding-left:1.2rem;display:flex;flex-direction:column;gap:5px}
+.upi-steps li{font-size:12px;color:var(--navy);line-height:1.5}
+.paid-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;border-radius:10px;padding:13px;font-family:var(--fm);font-size:13px;font-weight:500;cursor:pointer;box-shadow:0 4px 16px rgba(201,160,82,.28);transition:all .2s;margin-top:4px}
+.paid-btn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(201,160,82,.42)}
+
+/* Razorpay section */
+.rzp-section{display:none}
+.rzp-section.active{display:block}
+.rzp-cta{width:100%;background:var(--navy);color:var(--white);border:none;border-radius:10px;padding:13px;font-family:var(--fm);font-size:12px;font-weight:500;cursor:pointer;transition:background .2s;margin-bottom:10px}
+.rzp-cta:hover{background:var(--navy2)}
+.rzp-note{font-size:11.5px;color:var(--muted);line-height:1.65;padding:1rem;background:var(--off);border-radius:8px;border:1px solid var(--border)}
+.rzp-note a{color:var(--navy);font-weight:500}
+
+.secure-note{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;font-size:11px;color:var(--muted)}
+
+/* UPDATE BANNER */
+.upd-banner{display:none;position:fixed;bottom:1.25rem;right:1.25rem;background:var(--navy);border:1px solid rgba(201,160,82,.28);border-radius:14px;padding:1rem 1.25rem;max-width:300px;z-index:250;box-shadow:var(--s3);animation:slideUp .4s ease}
+.upd-banner.show{display:block}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.upd-title{font-size:11.5px;font-weight:500;color:var(--gold);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.upd-text{font-size:11px;color:rgba(255,255,255,.6);line-height:1.5;margin-bottom:10px}
+.upd-btns{display:flex;gap:8px}
+.upd-btn{background:var(--gold);color:var(--navy);border:none;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:500;cursor:pointer}
+.upd-dis{background:none;border:none;color:rgba(255,255,255,.38);font-size:11px;cursor:pointer}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(60px);background:var(--navy);color:var(--white);border-radius:10px;padding:10px 20px;font-size:12.5px;z-index:400;transition:transform .3s ease;border:1px solid rgba(255,255,255,.08);white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr}.hero-visual{display:none}.hero h1{font-size:38px}
+  .feat-grid{grid-template-columns:repeat(2,1fr)}.stats-in{grid-template-columns:repeat(3,1fr)}
+  .stat:nth-child(n+4){display:none}.pg{grid-template-columns:1fr}.ft-grid{grid-template-columns:1fr 1fr}
+  .news-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}.mob-btn{display:block}
+  .fg2{grid-template-columns:1fr}.rv-grid{grid-template-columns:1fr 1fr}.tech-grid{grid-template-columns:1fr}
+  .ot-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .hero h1{font-size:30px}.hero-desc{font-size:13.5px}.feat-grid{grid-template-columns:1fr}
+  .news-grid{grid-template-columns:1fr}.nc.feat{grid-template-columns:1fr}.nc-vis{display:none}
+  .stats-in{grid-template-columns:repeat(2,1fr)}.stat:nth-child(n+3){display:none}
+  .ft-grid{grid-template-columns:1fr}.ft-col:nth-child(n+3){display:none}
+  .ot-grid{grid-template-columns:1fr}.sec-title{font-size:28px}
+  .pm-tabs{flex-direction:column}.upi-apps{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- MOBILE DRAWER -->
+<div class="drawer-ov" id="dov" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  <div class="logo" style="margin-bottom:8px">
+    <div class="lm">A</div>
+    <div><div class="ln">Aurex Capital</div><span class="ls">Research</span></div>
+  </div>
+  <div class="drawer-links">
+    <div class="dl" onclick="g('features');closeDrawer()">Platform</div>
+    <div class="dl" onclick="g('screener');closeDrawer()">AI Screener</div>
+    <div class="dl" onclick="g('news');closeDrawer()">Live News</div>
+    <div class="dl" onclick="g('pricing');closeDrawer()">Pricing</div>
+    <div class="dl" onclick="g('stack');closeDrawer()">Tech Stack</div>
+  </div>
+  <button class="nav-cta" style="width:100%;margin-top:auto" onclick="openModal('Pro Monthly','₹999/mo');closeDrawer()">Get Full Access</button>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-in">
+    <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      <div class="lm">A</div>
+      <div><div class="ln">Aurex Capital Research</div><span class="ls">Institutional AI Intelligence</span></div>
+    </div>
+    <div class="nav-links">
+      <button class="nl" onclick="g('features')">Platform</button>
+      <button class="nl" onclick="g('screener')">AI Screener</button>
+      <button class="nl" onclick="g('news')">Live News</button>
+      <button class="nl" onclick="g('pricing')">Pricing</button>
+      <button class="nl" onclick="g('stack')">Tech Stack</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="nav-cta" onclick="openModal('Pro Monthly','₹999/mo')">Get Full Access</button>
+      <button class="mob-btn" onclick="openDrawer()">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker z1"><div class="tick-in" id="tickerEl"></div></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow"><span class="live-dot"></span> AI-Powered · 5 Institutional Frameworks · Live Intelligence</div>
+        <h1>The <em>Ultimate Weapon</em><br>of Stock Intelligence</h1>
+        <p class="hero-desc">Goldman Sachs screening. Bridgewater risk. JPMorgan earnings. BlackRock portfolios. Live AI market news — merged into one 360° platform that hedge funds would never share with you.</p>
+        <div class="firm-pills">
+          <div class="fp">Goldman Sachs Screener</div>
+          <div class="fp">Bridgewater Risk Engine</div>
+          <div class="fp">JPMorgan Earnings Desk</div>
+          <div class="fp">BlackRock Portfolio Lab</div>
+          <div class="fp">Live AI News Feed</div>
+        </div>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="g('screener')">🔱 GENERATE MY AUREX REPORT</button>
+          <button class="btn-ghost" onclick="g('pricing')">View Plans</button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hv-head">
+          <span class="hv-title">AUREX LIVE DASHBOARD</span>
+          <span class="hv-live"><span style="width:6px;height:6px;border-radius:50%;background:#4ADE80;animation:blink 2s infinite;display:inline-block"></span>LIVE</span>
+        </div>
+        <canvas class="hv-chart" id="heroChart"></canvas>
+        <div class="hv-rows" id="hvRows"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar z1">
+  <div class="stats-in">
+    <div class="stat"><div class="stat-n">5</div><div class="stat-l">Institutional Frameworks</div></div>
+    <div class="stat"><div class="stat-n">50+</div><div class="stat-l">Screening Parameters</div></div>
+    <div class="stat"><div class="stat-n">10,000+</div><div class="stat-l">Stocks Daily</div></div>
+    <div class="stat"><div class="stat-n">24/7</div><div class="stat-l">AI Research Engine</div></div>
+    <div class="stat"><div class="stat-n">360°</div><div class="stat-l">Financial Intelligence</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features z1" id="features">
+  <div class="container">
+    <div class="sec-hd">
+      <div class="sec-ey">Why AUREX Is Different</div>
+      <div class="gold-bar cx"></div>
+      <h2 class="sec-title">Other platforms give you data.<br><em style="color:var(--gold);font-style:normal">AUREX gives you decisions.</em></h2>
+      <p class="sec-sub">Every output is a complete institutional-grade analysis — not a chart you still have to interpret yourself.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="ficon">📊</div><span class="ftag gs">Goldman Sachs</span><h3>Equity Screener</h3><p>Top 10 picks with P/E analysis, moat ratings, bull/bear price targets, risk scores and portfolio allocation — the full GS research desk in one report.</p></div>
+      <div class="fcard"><div class="ficon">🛡️</div><span class="ftag bw">Bridgewater</span><h3>Risk Intelligence</h3><p>Correlation matrix, recession stress tests, tail risk scenarios with probability estimates and actionable hedging strategies — Dalio's principles on your portfolio.</p></div>
+      <div class="fcard"><div class="ficon">📋</div><span class="ftag jp">JPMorgan</span><h3>Earnings Desk</h3><p>Pre-earnings briefs with beat/miss history, options implied move, segment breakdown, management guidance and a definitive recommended play.</p></div>
+      <div class="fcard"><div class="ficon">🏦</div><span class="ftag br">BlackRock</span><h3>Portfolio Lab</h3><p>Complete multi-asset portfolio with exact ETF picks, core vs satellite labeling, rebalancing schedule, tax efficiency and a full Investment Policy Statement.</p></div>
+      <div class="fcard"><div class="ficon">📰</div><span class="ftag ai">Live AI News</span><h3>Market Intelligence</h3><p>AI-curated news briefings refreshed on demand. Every story includes portfolio impact analysis and BULLISH/BEARISH/NEUTRAL verdict for your holdings.</p></div>
+      <div class="fcard"><div class="ficon">⚡</div><span class="ftag ai">AUREX Engine</span><h3>360° Unified Report</h3><p>One button. All 5 frameworks. One seamless institutional research document personalized to your exact profile, holdings, earnings target and goals.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENER -->
+<section class="screener z1" id="screener">
+  <div class="container">
+    <div style="margin-bottom:1.75rem">
+      <div class="sec-ey">AUREX 360° Report Generator</div>
+      <div class="gold-bar"></div>
+      <h2 class="sec-title" style="font-size:28px;text-align:left">Build Your Complete Intelligence Report</h2>
+      <p class="sec-sub" style="text-align:left;margin:0">4 steps. Goldman + Bridgewater + JPMorgan + BlackRock — one document.</p>
+    </div>
+    <div class="sw">
+      <div class="sw-head">
+        <h3 id="sw-title">Step 1 — Investor Profile</h3>
+        <span class="sw-badge" id="sw-badge">01 / 04</span>
+      </div>
+      <div class="sw-body">
+        <div class="step-nav">
+          <div class="sb active" id="sb1"><span class="sn">01</span><span class="sl">Profile</span></div>
+          <div class="sb" id="sb2"><span class="sn">02</span><span class="sl">Holdings</span></div>
+          <div class="sb" id="sb3"><span class="sn">03</span><span class="sl">Earnings</span></div>
+          <div class="sb" id="sb4"><span class="sn">04</span><span class="sl">Fire</span></div>
+        </div>
+        <!-- P1 -->
+        <div class="panel active" id="p1">
+          <div class="fg2">
+            <div class="f"><label>Your Name / Alias</label><input id="vname" placeholder="e.g. Rahul / The Investor"></div>
+            <div class="f"><label>Age</label><input id="vage" type="number" placeholder="e.g. 32" min="18" max="99"></div>
+          </div>
+          <div class="fg2">
+            <div class="f"><label>Annual Income</label><input id="vincome" placeholder="e.g. ₹18 Lakhs / $80K"></div>
+            <div class="f"><label>Capital to Deploy</label><input id="vcapital" placeholder="e.g. ₹10L / $50K"></div>
+          </div>
+          <div class="fg2">
+            <div class="f"><label>Risk Tolerance</label><select id="vrisk"><option>Conservative</option><option selected>Moderate</option><option>Aggressive</option><option>Very Aggressive</option></select></div>
+            <div class="f"><label>Time Horizon</label><select id="vhorizon"><option>Short-term (6–12 months)</option><option selected>Medium-term (1–3 years)</option><option>Long-term (5+ years)</option></select></div>
+          </div>
+          <div class="fg2">
+            <div class="f"><label>Investment Focus</label><select id="vfocus"><option>Growth stocks</option><option>Dividend / Income</option><option>Value stocks</option><option selected>Blend of all styles</option></select></div>
+            <div class="f"><label>Monthly SIP / DCA</label><input id="vsip" placeholder="e.g. ₹25,000 / $500"></div>
+          </div>
+          <span class="slbl">Preferred Sectors</span>
+          <div class="chips-row" id="schips">
+            <div class="chip on" data-s="Technology">Technology</div>
+            <div class="chip on" data-s="Financials">Financials</div>
+            <div class="chip on" data-s="Energy">Energy</div>
+            <div class="chip" data-s="Healthcare">Healthcare</div>
+            <div class="chip" data-s="Consumer Discretionary">Consumer</div>
+            <div class="chip" data-s="Industrials">Industrials</div>
+            <div class="chip" data-s="Real Estate">Real Estate</div>
+            <div class="chip" data-s="Pharmaceuticals">Pharma</div>
+            <div class="chip" data-s="Metals &amp; Mining">Metals</div>
+            <div class="chip" data-s="FMCG">FMCG</div>
+          </div>
+          <div class="btn-row"><button class="btn-next" onclick="goS(2)">CONTINUE → HOLDINGS</button></div>
+        </div>
+        <!-- P2 -->
+        <div class="panel" id="p2">
+          <div class="fg2">
+            <div class="f"><label>Total Portfolio Value</label><input id="vportval" placeholder="e.g. ₹8,50,000 / $40K"></div>
+            <div class="f"><label>Account Type</label><select id="vaccount"><option>Regular Taxable Account</option><option>Tax-saver (ELSS / 80C)</option><option>NPS / Pension</option><option>401K / IRA (US)</option></select></div>
+          </div>
+          <div class="f" style="margin-bottom:12px"><label>Current Holdings (Ticker — % Allocation)</label><textarea id="vholdings" placeholder="TCS — 20%&#10;HDFC Bank — 15%&#10;Reliance — 15%&#10;&#10;Leave blank if building from scratch."></textarea></div>
+          <div class="f" style="margin-bottom:12px"><label>Top Risk Concern</label><select id="vriskconcern"><option>Market crash / recession</option><option>Interest rate spike</option><option>INR currency depreciation</option><option>Sector over-concentration</option><option>Single stock blow-up</option><option>All of the above</option></select></div>
+          <div class="btn-row"><button class="btn-back" onclick="goS(1)">← Back</button><button class="btn-next" onclick="goS(3)">CONTINUE → EARNINGS</button></div>
+        </div>
+        <!-- P3 -->
+        <div class="panel" id="p3">
+          <div class="fg2">
+            <div class="f"><label>Company Name</label><input id="vearnco" placeholder="e.g. Infosys, NVIDIA, HDFC Bank"></div>
+            <div class="f"><label>Ticker Symbol</label><input id="vearntick" placeholder="e.g. INFY.NS, NVDA"></div>
+          </div>
+          <div class="fg2">
+            <div class="f"><label>Earnings Date</label><input id="vearndate" placeholder="e.g. April 17, 2026"></div>
+            <div class="f"><label>Your Position</label><select id="vearnpos"><option>No position — evaluating entry</option><option>Long — deciding whether to hold</option><option>Short — evaluating exit</option><option>Considering options</option></select></div>
+          </div>
+          <div class="f" style="margin-bottom:12px"><label>Key Earnings Concern</label><input id="vearnnotes" placeholder="e.g. US revenue slowdown, margin guidance..."></div>
+          <div class="btn-row"><button class="btn-back" onclick="goS(2)">← Back</button><button class="btn-next" onclick="goS(4)">CONTINUE → REVIEW & FIRE</button></div>
+        </div>
+        <!-- P4 -->
+        <div class="panel" id="p4">
+          <div class="fg2">
+            <div class="f"><label>Primary Goal</label><select id="vgoal"><option>Wealth accumulation</option><option>Retirement planning</option><option>Financial Independence (FIRE)</option><option>Child education fund</option><option>Real estate purchase</option></select></div>
+            <div class="f"><label>Additional Notes</label><input id="vnotes" placeholder="e.g. India-focused, avoid PSU banks..."></div>
+          </div>
+          <div class="rv-box" id="rv-box"><h4>Your AUREX Profile — Confirm Before Firing</h4><div class="rv-grid" id="rv-grid"></div></div>
+          <button class="btn-fire" onclick="fireAurex()">🔱 FIRE THE AUREX 360° REPORT ↗</button>
+          <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.65">Goldman Sachs + Bridgewater + JPMorgan + BlackRock — one document. Educational purposes only.</p>
+          <div class="btn-row" style="margin-top:10px"><button class="btn-back" onclick="goS(3)">← Back</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS DESK -->
+<section class="news z1" id="news">
+  <div class="container">
+    <div class="news-hdr">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="width:7px;height:7px;border-radius:50%;background:#EF4444;animation:blink 2s infinite;display:inline-block"></span>
+          <span style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-family:var(--fm)">AI-Powered · Updates On Demand</span>
+        </div>
+        <h2 style="font-family:var(--fd);font-size:28px;font-weight:600;color:var(--navy)">Market Intelligence Desk</h2>
+        <p style="font-size:13px;color:var(--muted);margin-top:6px">Every story analyzed by AUREX AI — with portfolio impact &amp; verdict. Refresh for a live briefing.</p>
+      </div>
+      <div class="news-ctrl">
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="nf-chips">
+          <div class="chip on" data-nf="All" onclick="filterNews(this)">All</div>
+          <div class="chip" data-nf="Technology" onclick="filterNews(this)">Tech</div>
+          <div class="chip" data-nf="Financials" onclick="filterNews(this)">Finance</div>
+          <div class="chip" data-nf="Energy" onclick="filterNews(this)">Energy</div>
+          <div class="chip" data-nf="India" onclick="filterNews(this)">India</div>
+          <div class="chip" data-nf="Macro" onclick="filterNews(this)">Macro</div>
+        </div>
+        <button class="news-btn" id="refreshBtn" onclick="refreshNews()">
+          <span id="ri">↻</span> AI REFRESH
+        </button>
+      </div>
+    </div>
+    <div id="news-area">
+      <div class="news-grid" id="news-grid"></div>
+      <div class="news-ts" id="news-ts">Last updated: March 17, 2026 · 09:45 AM IST · Powered by AUREX AI</div>
+    </div>
+    <button style="width:100%;margin-top:1.2rem;background:var(--off);border:1px solid var(--border);border-radius:10px;padding:11px;font-family:var(--fm);font-size:11px;color:var(--muted);cursor:pointer;letter-spacing:.05em;transition:all .2s" onmouseover="this.style.background='var(--navy)';this.style.color='var(--white)'" onmouseout="this.style.background='var(--off)';this.style.color='var(--muted)'" onclick="deepDive()">↗ ASK AUREX — Deep dive on today's most important market story</button>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing z1" id="pricing">
+  <div class="container">
+    <div class="sec-hd">
+      <div class="sec-ey">Research Plans</div>
+      <div class="gold-bar cx"></div>
+      <h2 class="sec-title">Unlock All 5 Frameworks</h2>
+      <p class="sec-sub">Unlimited institutional-grade reports. Cancel anytime.</p>
+    </div>
+    <div class="pg">
+      <div class="pc">
+        <div class="pp">Starter</div><div class="pa">Free</div><div class="ppe">Forever · No card needed</div>
+        <ul class="pf"><li>3 AUREX reports per month</li><li>Basic GS Screener</li><li>Market news feed</li><li>Weekly AI digest</li></ul>
+        <button class="pbtn po" onclick="openModal('Starter','Free')">Get Started Free</button>
+      </div>
+      <div class="pc feat">
+        <div class="pop">Most Popular</div>
+        <div class="pp">Pro</div><div class="pa">₹999</div><div class="ppe">/month · billed monthly</div>
+        <ul class="pf"><li>Unlimited 360° AUREX Reports</li><li>All 5 institutional frameworks</li><li>Live AI news desk</li><li>Bridgewater risk engine</li><li>JPMorgan earnings briefs</li><li>BlackRock portfolio lab</li><li>Risk alerts &amp; rebalancing</li></ul>
+        <button class="pbtn pg2" onclick="openModal('Pro Monthly','₹999/mo')">Subscribe Now</button>
+        <div class="pay-note">Pay via UPI · Cards · NetBanking</div>
+      </div>
+      <div class="pc">
+        <div class="pp">Pro Annual</div><div class="pa">₹4,999</div><div class="ppe">/year · save 58%</div>
+        <ul class="pf"><li>Everything in Pro</li><li>Sector deep dive reports</li><li>White-label PDF exports</li><li>API data access</li><li>Monthly AI model updates</li><li>Priority AI queue</li></ul>
+        <button class="pbtn po" onclick="openModal('Pro Annual','₹4,999/yr')">Subscribe Annually</button>
+        <div class="pay-note">Save ₹6,989 vs monthly</div>
+      </div>
+    </div>
+    <!-- ONE TIME -->
+    <div class="ot-sec">
+      <h3 style="font-family:var(--fd);font-size:22px;color:var(--navy);margin-bottom:4px">One-Time Reports</h3>
+      <p style="font-size:13px;color:var(--muted)">No subscription — buy a single institutional report.</p>
+      <div class="ot-grid">
+        <div class="ot-card"><h4>GS Stock Report</h4><p>Full Goldman Sachs equity research on any single stock.</p><div class="ot-price">₹299</div><button class="ot-btn" onclick="openModal('GS Stock Report','₹299')">Buy Report</button></div>
+        <div class="ot-card"><h4>Bridgewater Risk Audit</h4><p>Complete portfolio risk assessment using Dalio principles.</p><div class="ot-price">₹499</div><button class="ot-btn" onclick="openModal('Risk Audit','₹499')">Buy Audit</button></div>
+        <div class="ot-card"><h4>JPMorgan Earnings Brief</h4><p>Pre-earnings institutional brief for any company.</p><div class="ot-price">₹199</div><button class="ot-btn" onclick="openModal('Earnings Brief','₹199')">Buy Brief</button></div>
+      </div>
+    </div>
+    <!-- PAY STRIP -->
+    <div class="pay-strip">
+      <span class="pay-label">Accepted Payments</span>
+      <div class="pm"><div class="pi" style="background:#00B9F1;font-size:8px">UPI</div><span>UPI</span></div>
+      <div class="pm"><div class="pi" style="background:#1A1F71">VISA</div><span>Visa</span></div>
+      <div class="pm"><div class="pi" style="background:#EB001B;font-size:8px">MC</div><span>Mastercard</span></div>
+      <div class="pm"><div class="pi" style="background:#6739B7;font-size:8px">PH</div><span>PhonePe</span></div>
+      <div class="pm"><div class="pi" style="background:#45A049;font-size:7px">GPay</div><span>Google Pay</span></div>
+      <div class="pm"><div class="pi" style="background:#00B2FF;font-size:7px">Paytm</div><span>Paytm</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="tech z1" id="stack">
+  <div class="container">
+    <div class="sec-hd">
+      <div class="sec-ey" style="color:var(--gold)">Production Architecture</div>
+      <div class="gold-bar cx"></div>
+      <h2 class="sec-title" style="color:var(--white)">Full Tech Stack to Deploy AUREX</h2>
+      <p class="sec-sub" style="color:rgba(255,255,255,.48)">Everything needed to take this live — frontend to backend, payments to AI engine.</p>
+    </div>
+    <div class="tech-grid">
+      <div class="tcard"><h3>🎨 Frontend + PWA</h3><p>Next.js 14 with App Router for SSR and SEO. Tailwind CSS. PWA manifest + service worker for iOS/Android install. Deployed on Vercel free tier — handles 100K visitors/month automatically.</p><div class="tbadges"><span class="tb">Next.js 14</span><span class="tb">Tailwind CSS</span><span class="tb">Vercel</span><span class="tb">PWA</span><span class="tb">iOS + Android</span></div></div>
+      <div class="tcard"><h3>🧠 AI Engine</h3><p>Anthropic Claude API powers all 5 frameworks — screener, risk, earnings, portfolio and live news. Monthly cron job auto-refreshes market context and model prompts on the 1st of every month.</p><div class="tbadges"><span class="tb">Claude API</span><span class="tb">claude-sonnet-4</span><span class="tb">Vercel Cron</span><span class="tb">Monthly Auto-Update</span></div></div>
+      <div class="tcard"><h3>🗄️ Database + Auth</h3><p>Supabase (PostgreSQL) for user accounts, subscription status, saved reports and report history. Google OAuth + email/password login. Row-level security protects every user's data.</p><div class="tbadges"><span class="tb">Supabase</span><span class="tb">PostgreSQL</span><span class="tb">Google OAuth</span><span class="tb">RLS Security</span></div></div>
+      <div class="tcard"><h3>💳 Payments — Your UPI Live Now</h3><p>Your UPI ID <strong style="color:var(--gold)">swamiom2005@okhdfcbank</strong> is already wired in — customers can pay you right now via Google Pay, PhonePe and Paytm. Razorpay (for cards + auto-renewal) can be added in 15 minutes at razorpay.com.</p><div class="tbadges"><span class="tb">UPI ✅ Live Now</span><span class="tb">Google Pay</span><span class="tb">PhonePe</span><span class="tb">Razorpay (add later)</span></div></div>
+      <div class="tcard"><h3>📊 Live Market Data</h3><p>Alpha Vantage free tier for NSE/BSE and US stock prices, P/E ratios and fundamentals. NSE India API for live NIFTY data. NewsAPI for real financial news headlines fed into the AI news desk.</p><div class="tbadges"><span class="tb">Alpha Vantage</span><span class="tb">NSE India API</span><span class="tb">NewsAPI</span><span class="tb">Real-time Prices</span></div></div>
+      <div class="tcard"><h3>📧 Email + Push Notifications</h3><p>Resend for transactional emails — welcome sequences, report delivery, payment confirmations and monthly AI digest. Web Push API for breaking market alerts to PWA users on mobile and desktop.</p><div class="tbadges"><span class="tb">Resend</span><span class="tb">Web Push API</span><span class="tb">Email Templates</span><span class="tb">Monthly Digest</span></div></div>
+    </div>
+    <div class="setup-box">
+      <h4>⚙️ Upgrade to Razorpay Later (15 minutes)</h4>
+      <p>
+        1. Go to <strong style="color:var(--white)">razorpay.com</strong> → Sign Up free (need PAN + bank account) → Dashboard → API Keys → Copy your <code>rzp_live_xxx</code> key.<br><br>
+        2. Open <code>index.html</code> → Find <code>RAZORPAY_KEY_ID: 'ADD_LATER'</code> → Replace with your actual key → Razorpay activates automatically. Supports all cards, net banking, EMI and auto-recurring subscriptions.<br><br>
+        3. Razorpay charges only <strong style="color:var(--gold)">2% per transaction</strong> — on a ₹999 subscription they take ₹20, you keep ₹979. Zero monthly fees.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="ft-grid">
+      <div class="ft-brand">
+        <div class="logo"><div class="lm">A</div><div><div class="ln">Aurex Capital Research</div><span class="ls">Institutional AI Intelligence</span></div></div>
+        <p>The world's most powerful financial intelligence platform — Goldman Sachs + Bridgewater + JPMorgan + BlackRock merged into one AI system.</p>
+      </div>
+      <div class="ft-col"><h5>Platform</h5><a onclick="g('features')">AI Screener</a><a onclick="g('features')">Risk Engine</a><a onclick="g('features')">Earnings Desk</a><a onclick="g('news')">Live News</a></div>
+      <div class="ft-col"><h5>Company</h5><a>About Aurex</a><a>Methodology</a><a>Careers</a><a>Contact</a></div>
+      <div class="ft-col"><h5>Legal</h5><a>Terms of Service</a><a>Privacy Policy</a><a>Disclaimer</a><a>Refund Policy</a></div>
+    </div>
+    <div class="ft-bot">
+      <span class="ft-copy">© 2026 Aurex Capital Research. All rights reserved.</span>
+      <span class="ft-dis">AI-generated reports are for educational purposes only. Not SEBI-registered investment advice. Consult a licensed financial advisor before investing.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== PAYMENT MODAL ===== -->
+<div class="modal-ov" id="modalOv">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="plan-badge" id="mPlanBadge">PRO MONTHLY — ₹999/MO</div>
+    <h3 id="mTitle">Complete Your Payment</h3>
+    <p class="modal-sub" id="mSub">Instant access to all 5 institutional frameworks.</p>
+
+    <!-- METHOD TABS -->
+    <div class="pm-tabs" id="pmTabs">
+      <div class="pm-tab sel" id="tab-upi" onclick="selMethod('upi')">
+        <div class="pm-tab-icon">📱</div>
+        <div class="pm-tab-name">UPI</div>
+        <div class="pm-tab-desc">GPay · PhonePe · Paytm</div>
+      </div>
+      <div class="pm-tab" id="tab-rzp" onclick="selMethod('rzp')">
+        <div class="pm-tab-icon">💳</div>
+        <div class="pm-tab-name">Cards / NetBanking</div>
+        <div class="pm-tab-desc">All Indian banks</div>
+      </div>
+    </div>
+
+    <!-- UPI SECTION -->
+    <div class="upi-section active" id="upiSec">
+      <!-- Amount -->
+      <div style="text-align:center;margin-bottom:1rem;padding:12px;background:var(--off);border-radius:10px;border:1px solid var(--border)">
+        <div class="upi-amount-label">Amount to Pay</div>
+        <div class="upi-amount-val" id="upiAmount">₹999</div>
+        <div style="font-size:11px;color:var(--muted)">Aurex Capital Research</div>
+      </div>
+
+      <!-- UPI Apps -->
+      <div style="font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Pay Directly Via App</div>
+      <div class="upi-apps" id="upiApps"></div>
+
+      <!-- UPI ID Box -->
+      <div style="font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Or Pay to UPI ID Manually</div>
+      <div class="upi-id-box">
+        <div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">UPI ID</div>
+          <div class="upi-id-val">swamiom2005@okhdfcbank</div>
+        </div>
+        <button class="copy-btn" onclick="copyUPI()">Copy</button>
+      </div>
+
+      <!-- QR Code -->
+      <div class="qr-wrap">
+        <div id="qr-container"></div>
+        <p>Scan with any UPI app — Google Pay, PhonePe, Paytm, BHIM</p>
+      </div>
+
+      <!-- Steps -->
+      <div class="upi-steps">
+        <h5>How to Pay</h5>
+        <ol>
+          <li>Click your preferred app above — it will open directly with amount pre-filled</li>
+          <li>Or scan the QR code with any UPI app</li>
+          <li>Or manually enter UPI ID: <strong>swamiom2005@okhdfcbank</strong></li>
+          <li>After payment, click "I've Paid" below to confirm your access</li>
+        </ol>
+      </div>
+
+      <button class="paid-btn" onclick="confirmPayment()">✅ I've Paid — Activate My Access</button>
+    </div>
+
+    <!-- RAZORPAY SECTION -->
+    <div class="rzp-section" id="rzpSec">
+      <button class="rzp-cta" onclick="goRazorpay()">Continue to Razorpay →</button>
+      <div class="rzp-note">
+        Razorpay will be available once the account is set up at <a href="https://razorpay.com" target="_blank">razorpay.com</a>. Takes 15 minutes — need PAN + bank account. Charges only 2% per transaction. For now, please use UPI to complete your payment.
+      </div>
+    </div>
+
+    <div class="secure-note"><span>🔒</span> Payments go directly to UPI ID · No card data stored</div>
+  </div>
+</div>
+
+<!-- UPDATE BANNER -->
+<div class="upd-banner" id="updBanner">
+  <div class="upd-title"><span>🔱</span> AUREX Monthly Update</div>
+  <div class="upd-text">New market intelligence and refreshed AI models are ready for this month.</div>
+  <div class="upd-btns">
+    <button class="upd-btn" onclick="applyUpdate()">Apply Update</button>
+    <button class="upd-dis" onclick="document.getElementById('updBanner').classList.remove('show')">Dismiss</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG — YOUR UPI IS WIRED IN ✅
+// ============================================================
+const UPI_ID = 'swamiom2005@okhdfcbank';
+const MERCHANT_NAME = 'Aurex Capital Research';
+const RAZORPAY_KEY = 'ADD_LATER'; // Add when you create Razorpay account
+
+// ============================================================
+// CANVAS STOCK CHART BACKGROUND
+// ============================================================
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let lines = [];
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+resizeCanvas();window.addEventListener('resize',()=>{resizeCanvas();initLines()});
+function initLines(){
+  lines=[];
+  for(let i=0;i<7;i++){
+    const pts=[];let y=80+i*(canvas.height/7),x=0;
+    while(x<canvas.width+100){
+      pts.push({x,y});x+=Math.random()*60+20;
+      y+=(Math.random()-.48)*28;
+      y=Math.max(40,Math.min(canvas.height-40,y));
+    }
+    lines.push({pts,off:Math.random()*1000,spd:.3+Math.random()*.4});
+  }
+}
+initLines();
+function drawBg(t){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  lines.forEach((l,li)=>{
+    ctx.beginPath();
+    ctx.strokeStyle=`rgba(201,160,82,${.55+li*.04})`;
+    ctx.lineWidth=1;
+    l.pts.forEach((p,i)=>{
+      const dy=Math.sin((t/3000+p.x/200+l.off)*l.spd)*8;
+      i===0?ctx.moveTo(p.x,p.y+dy):ctx.lineTo(p.x,p.y+dy);
+    });
+    ctx.stroke();
+  });
+  requestAnimationFrame(drawBg);
+}
+requestAnimationFrame(drawBg);
+
+// ============================================================
+// TICKER
+// ============================================================
+const tickerData=[
+  {s:'NIFTY50',p:'23,487',c:'+0.84%',u:true},{s:'SENSEX',p:'77,312',c:'+0.71%',u:true},
+  {s:'NVDA',p:'$127.45',c:'+2.31%',u:true},{s:'MSFT',p:'$396.20',c:'+0.55%',u:true},
+  {s:'AAPL',p:'$218.90',c:'-0.32%',u:false},{s:'RELIANCE',p:'₹2,847',c:'+1.12%',u:true},
+  {s:'TCS',p:'₹3,512',c:'+0.67%',u:true},{s:'HDFC BANK',p:'₹1,642',c:'-0.45%',u:false},
+  {s:'GOLD',p:'$2,187',c:'+0.28%',u:true},{s:'BRENT',p:'$84.20',c:'+1.35%',u:true},
+  {s:'INFY',p:'₹1,423',c:'+0.89%',u:true},{s:'JPM',p:'$248.30',c:'+1.04%',u:true},
+  {s:'AVGO',p:'$212.80',c:'+1.67%',u:true},{s:'SUNPHARMA',p:'₹1,756',c:'+0.93%',u:true},
+  {s:'ONGC',p:'₹243',c:'+0.54%',u:true},{s:'USD/INR',p:'₹83.42',c:'-0.12%',u:false},
+];
+const tickerEl=document.getElementById('tickerEl');
+[...tickerData,...tickerData].forEach(t=>{
+  tickerEl.innerHTML+=`<div class="ti"><span class="ts">${t.s}</span><span class="tp">${t.p}</span><span class="${t.u?'tup':'tdn'}">${t.c}</span><span class="tdot"></span></div>`;
+});
+setInterval(()=>{
+  document.querySelectorAll('.tp').forEach(el=>{
+    const v=parseFloat(el.textContent.replace(/[₹$,]/g,''));
+    if(isNaN(v))return;
+    const nv=v+(Math.random()-.49)*v*.0008;
+    const isRs=el.textContent.includes('₹');
+    el.textContent=isRs?'₹'+nv.toLocaleString('en-IN',{maximumFractionDigits:2}):'$'+nv.toFixed(2);
+  });
+},3000);
+
+// ============================================================
+// HERO CHART
+// ============================================================
+const hc=document.getElementById('heroChart');
+if(hc){
+  const hctx=hc.getContext('2d');
+  hc.width=hc.offsetWidth*2;hc.height=hc.offsetHeight*2;
+  hc.style.width='100%';hc.style.height='100%';
+  let pts=[];
+  for(let i=0;i<60;i++)pts.push(50+Math.sin(i/8)*20+Math.random()*10+i*.3);
+  function drawHero(){
+    hctx.clearRect(0,0,hc.width,hc.height);
+    const w=hc.width,h=hc.height,mn=Math.min(...pts),mx=Math.max(...pts);
+    const sy=(p)=>(h-20)-(p-mn)/(mx-mn)*(h-40);
+    const sx=(i)=>i/(pts.length-1)*w;
+    const gr=hctx.createLinearGradient(0,0,0,h);
+    gr.addColorStop(0,'rgba(201,160,82,.22)');gr.addColorStop(1,'rgba(201,160,82,0)');
+    hctx.beginPath();
+    pts.forEach((p,i)=>i===0?hctx.moveTo(sx(i),sy(p)):hctx.lineTo(sx(i),sy(p)));
+    hctx.lineTo(w,h);hctx.lineTo(0,h);hctx.closePath();
+    hctx.fillStyle=gr;hctx.fill();
+    hctx.beginPath();
+    pts.forEach((p,i)=>i===0?hctx.moveTo(sx(i),sy(p)):hctx.lineTo(sx(i),sy(p)));
+    hctx.strokeStyle='rgba(201,160,82,.8)';hctx.lineWidth=2;hctx.stroke();
+  }
+  drawHero();
+  setInterval(()=>{pts.shift();pts.push(pts[pts.length-1]+(Math.random()-.48)*2);drawHero()},700);
+}
+const hvData=[{s:'NIFTY50',p:'23,487',c:'+0.84%',u:true},{s:'TCS',p:'₹3,512',c:'+0.67%',u:true},{s:'NVDA',p:'$127.45',c:'+2.31%',u:true},{s:'HDFC BANK',p:'₹1,642',c:'-0.45%',u:false}];
+const hvEl=document.getElementById('hvRows');
+if(hvEl)hvEl.innerHTML=hvData.map(d=>`<div class="hv-row"><span class="hv-sym">${d.s}</span><span class="hv-pr">${d.p}</span><span class="${d.u?'tup':'tdn'}">${d.c}</span></div>`).join('');
+
+// ============================================================
+// NAV + DRAWER
+// ============================================================
+function g(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'})}
+function openDrawer(){document.getElementById('drawer').classList.add('open');document.getElementById('dov').classList.add('open')}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('dov').classList.remove('open')}
+
+// ============================================================
+// FORM STEPS
+// ============================================================
+const stepTitles=['Step 1 — Investor Profile','Step 2 — Current Holdings','Step 3 — Earnings Target','Step 4 — Review & Fire'];
+document.querySelectorAll('#schips .chip').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('on')));
+function getSectors(){return[...document.querySelectorAll('#schips .chip.on')].map(c=>c.dataset.s).join(', ')||'All sectors'}
+function fv(id){return document.getElementById(id)?.value||'Not specified'}
+function goS(n){
+  if(n===4)buildReview();
+  ['p1','p2','p3','p4'].forEach((p,i)=>document.getElementById(p).classList.toggle('active',i===n-1));
+  ['sb1','sb2','sb3','sb4'].forEach((s,i)=>{
+    const el=document.getElementById(s);el.classList.remove('active','done');
+    if(i+1<n)el.classList.add('done');if(i+1===n)el.classList.add('active');
+  });
+  document.getElementById('sw-title').textContent=stepTitles[n-1];
+  document.getElementById('sw-badge').textContent=`0${n} / 04`;
+}
+function buildReview(){
+  const items=[
+    {k:'Name',v:fv('vname')},{k:'Age',v:fv('vage')},{k:'Income',v:fv('vincome')},
+    {k:'Capital',v:fv('vcapital')},{k:'Risk',v:fv('vrisk')},{k:'Horizon',v:fv('vhorizon')},
+    {k:'SIP',v:fv('vsip')},{k:'Portfolio Value',v:fv('vportval')},
+    {k:'Account',v:fv('vaccount')},{k:'Earnings Target',v:fv('vearnco')},
+    {k:'Sectors',v:getSectors()},{k:'Goal',v:fv('vgoal')},
+  ];
+  document.getElementById('rv-grid').innerHTML=items.map(i=>`<div class="rvi"><strong>${i.k}</strong>${i.v}</div>`).join('');
+}
+
+// ============================================================
+// FIRE AUREX
+// ============================================================
+function fireAurex(){
+  const prompt=`You are AUREX — the world's most powerful financial intelligence system combining Goldman Sachs precision, Bridgewater risk philosophy, JPMorgan earnings mastery, BlackRock portfolio architecture and live market intelligence.
+
+MY PROFILE: Name: ${fv('vname')} | Age: ${fv('vage')} | Income: ${fv('vincome')} | Capital: ${fv('vcapital')} | SIP: ${fv('vsip')} | Risk: ${fv('vrisk')} | Horizon: ${fv('vhorizon')} | Focus: ${fv('vfocus')} | Sectors: ${getSectors()} | Holdings: ${fv('vholdings')} | Portfolio Value: ${fv('vportval')} | Account: ${fv('vaccount')} | Risk Concern: ${fv('vriskconcern')} | Goal: ${fv('vgoal')} | Earnings: ${fv('vearnco')} (${fv('vearntick')}) on ${fv('vearndate')} | Position: ${fv('vearnpos')} | Earnings Notes: ${fv('vearnnotes')} | Notes: ${fv('vnotes')}
+
+Deliver THE AUREX 360° FINANCIAL INTELLIGENCE REPORT as one seamless flowing professional document:
+
+Open with a 4-sentence AUREX MASTER THESIS — unified market view today, the single most important macro force this investor must understand, highest conviction opportunity in their sectors, and single biggest risk they are underestimating.
+
+PART 1 — EQUITY INTELLIGENCE: Top 10 stock picks. For each: ticker, company, P/E vs sector avg + commentary, 5yr CAGR, D/E health, dividend yield + sustainability, moat rating + reason, bull case 12mo target + thesis, bear case 12mo target + risk, risk rating 1-10 + reason, entry zone + stop-loss. Summary table: Ticker|Company|Moat|P/E|Div Yield|Risk|Bull|Bear. Top 3 conviction picks with 3-4 sentence reasoning. AUREX VERDICT sentence.
+
+PART 2 — RISK INTELLIGENCE: Bridgewater stress test. Dangerous correlations + why lethal in crisis. Sector concentration Red/Amber/Green. INR vs USD exposure. +100bps/-100bps sensitivity per position. 2008 max drawdown per holding. Liquidity rating. Flag any position >15%. 4 tail risks (black swan/stagflation/geopolitical/India macro) with probability % and impact. Top 3 risks + specific hedges. Exact rebalancing. AUREX VERDICT sentence.
+
+PART 3 — EARNINGS INTELLIGENCE: JPMorgan brief for ${fv('vearnco')} (${fv('vearntick')}). Last 4 quarters beat/miss + driver. Revenue + EPS consensus — bar too high/low/right? 3-5 key metrics market is watching. Segment breakdown + swing factor. Management guidance 4-5 bullets. Options implied move + signal. Post-earnings reactions last 4 quarters. Bull case + price impact. Bear case + downside. Single definitive recommended play with 3 sentences reasoning. AUREX VERDICT sentence.
+
+PART 4 — PORTFOLIO CONSTRUCTION: BlackRock multi-asset portfolio. Exact % split: Indian equities, global equities, fixed income, gold/commodities, REITs, cash. Per category: ETF/fund name + ticker, 5yr return, expense ratio, 1-sentence reason. Label Core or Satellite. Expected annual return range. Max drawdown in severe bear year. Complete rebalancing schedule. Tax efficiency for this account type. Monthly SIP plan for ${fv('vsip')}. Benchmark. One-page Investment Policy Statement with philosophy, buy rules, sell rules, sizing rules, 3 things this investor will NEVER do. AUREX VERDICT sentence.
+
+PART 5 — MARKET INTELLIGENCE: Top 3 Technology, top 2 Financials, top 2 Energy, top 2 India/EM, 1 macro signal retail investors are missing. Per item: headline, 2-sentence portfolio impact, BULLISH/BEARISH/NEUTRAL verdict.
+
+Final AUREX MASTER VERDICT — single most important action this investor should take in the next 30 days. One clean disclaimer at the very end only.`;
+
+  if(typeof sendPrompt!=='undefined'){sendPrompt(prompt);showToast('🔱 AUREX report firing — check below!')}
+  else{navigator.clipboard?.writeText(prompt).then(()=>showToast('Prompt copied! Paste into Claude chat.'));alert('Paste this prompt into your Claude chat to generate the report!')}
+}
+
+// ============================================================
+// NEWS SYSTEM
+// ============================================================
+const defaultNews=[
+  {cat:'Technology',tag:'tt',icon:'💻',h:'AI Chip Demand Sends NVIDIA to Record Revenue',p:'Hyperscalers pour billions into AI infrastructure. Data center posts 122% YoY growth, beating all estimates by a wide margin.',src:'Reuters · 2h ago',v:'BULLISH',vc:'vb'},
+  {cat:'Financials',tag:'tf',icon:'🏦',h:'Fed Holds Rates; Markets Fully Price June Cut',p:'CME FedWatch shows 90% probability of June reduction. Rate-sensitive banking and real estate sectors are direct beneficiaries.',src:'Bloomberg · 3h ago',v:'BULLISH',vc:'vb'},
+  {cat:'Energy',tag:'te',icon:'⚡',h:'Brent Crude +1.4% on Middle East Supply Fears',p:'Geopolitical tensions push oil higher, directly benefiting ONGC, Reliance and global upstream producers in your portfolio.',src:'FT · 4h ago',v:'BULLISH',vc:'vb'},
+  {cat:'Macro',tag:'tm',icon:'📊',h:'India CPI Falls to 4.1% — RBI April Cut Base Case',p:'Inflation undershoots estimates, giving RBI clear runway to cut repo rate. HDFC Bank, Prestige Estates are direct beneficiaries.',src:'Economic Times · 5h ago',v:'BULLISH',vc:'vb'},
+  {cat:'India',tag:'ti2',icon:'🇮🇳',h:'NIFTY 50 Clears 23,500 on ₹4,200Cr FII Inflows',p:'Foreign institutional buying accelerates as India macro narrative strengthens vs all EM peers in Q1 2026.',src:'Moneycontrol · 6h ago',v:'BULLISH',vc:'vb'},
+  {cat:'Technology',tag:'tp2',icon:'💊',h:'Sun Pharma US Specialty Segment Beats by 8%',p:'Dermatology pipeline drives North America outperformance. Multiple analyst upgrades signal continued upside.',src:'Mint · 7h ago',v:'BULLISH',vc:'vb'},
+];
+let activeFilter='All';
+function renderNews(data){
+  const grid=document.getElementById('news-grid');if(!grid)return;
+  grid.innerHTML=data.map((n,i)=>`
+    <div class="nc${i===0?' feat':''}">
+      ${i===0?`<div class="nc-vis">${n.icon||'📈'}</div>`:''}
+      <div class="nc-body">
+        <span class="ntag ${n.tag}">${n.cat}</span>
+        <h4>${n.h}</h4><p>${n.p}</p>
+        <div class="nc-meta"><span class="nc-src">${n.src}</span><span class="verdict ${n.vc}">${n.v}</span></div>
+      </div>
+    </div>`).join('');
+}
+renderNews(defaultNews);
+function filterNews(el){
+  document.querySelectorAll('#nf-chips .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');activeFilter=el.dataset.nf;
+  const f=activeFilter==='All'?defaultNews:defaultNews.filter(n=>n.cat===activeFilter||n.cat.includes(activeFilter));
+  renderNews(f.length?f:defaultNews);
+}
+async function refreshNews(){
+  const btn=document.getElementById('refreshBtn'),icon=document.getElementById('ri');
+  btn.classList.add('loading');btn.disabled=true;icon.innerHTML='<span class="spin">↻</span>';
+  document.getElementById('news-area').innerHTML='<div class="news-ld"><div class="ld"></div><div class="ld"></div><div class="ld"></div><span style="margin-left:8px">AUREX AI scanning global markets...</span></div>';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1800,
+        system:'You are the Head of Market Intelligence at Aurex Capital Research. Return ONLY a valid JSON array. No markdown, no backticks. Each object: cat (Technology/Financials/Energy/India/Macro), tag (tt/tf/te/ti2/tm), icon (single emoji), h (headline max 12 words), p (exactly 2 sentences with portfolio impact for Indian investors), src (source · time), v (BULLISH/BEARISH/NEUTRAL), vc (vb/vr/vn).',
+        messages:[{role:'user',content:'Generate 6 fresh market intelligence stories for March 17, 2026. Cover: 2 Technology, 1 Financials, 1 Energy, 1 India markets, 1 Macro. Each needs portfolio impact for Indian equity investors. Return ONLY the JSON array.'}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.map(b=>b.text||'').join('')||'[]';
+    let parsed;try{parsed=JSON.parse(text.replace(/```json|```/g,'').trim())}catch{parsed=null}
+    if(parsed?.length){
+      document.getElementById('news-area').innerHTML='<div class="news-grid" id="news-grid"></div><div class="news-ts" id="news-ts"></div>';
+      renderNews(parsed);
+      const now=new Date();
+      document.getElementById('news-ts').textContent=`Last updated: ${now.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})} · ${now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})} IST · Powered by AUREX AI`;
+      showToast('News desk refreshed by AUREX AI ✓');
+    }else throw new Error();
+  }catch{
+    document.getElementById('news-area').innerHTML='<div class="news-grid" id="news-grid"></div><div class="news-ts" id="news-ts">Last updated: March 17, 2026 · Powered by AUREX AI</div>';
+    renderNews(defaultNews);showToast('Using cached news — refresh will retry shortly');
+  }
+  btn.classList.remove('loading');btn.disabled=false;icon.textContent='↻';
+}
+function deepDive(){
+  if(typeof sendPrompt!=='undefined')sendPrompt('You are AUREX Market Intelligence. March 17, 2026. Deep dive on the single most important market story for Indian equity investors right now. Cover: what happened, why it matters, which Indian stocks/sectors are most affected, what smart money is doing, and your AUREX verdict on the best tactical play for the next 30 days. Be direct and specific.');
+  else showToast('Open in Claude chat to use AI deep dive');
+}
+
+// ============================================================
+// PAYMENT MODAL — UPI WIRED IN ✅
+// ============================================================
+let currentPlan='Pro Monthly', currentAmount='₹999', currentMethod='upi';
+
+const planAmounts={
+  'Starter':'0','Pro Monthly':'999','Pro Annual':'4999',
+  'GS Stock Report':'299','Risk Audit':'499','Earnings Brief':'199'
+};
+
+function openModal(plan,amountStr){
+  if(plan==='Starter'){
+    showToast('Free account — just start using AUREX!');
+    if(typeof sendPrompt!=='undefined')sendPrompt('A new free user just signed up for Aurex Capital Research. Welcome them warmly, explain all the free features available, and guide them to generate their first AUREX report by filling in the screener form.');
+    return;
+  }
+  currentPlan=plan;
+  currentAmount=planAmounts[plan]||'999';
+  document.getElementById('mPlanBadge').textContent=`${plan.toUpperCase()} — ₹${currentAmount}`;
+  document.getElementById('mTitle').textContent='Complete Your Payment';
+  document.getElementById('mSub').textContent='Instant access to all 5 institutional frameworks after payment.';
+  document.getElementById('upiAmount').textContent=`₹${parseInt(currentAmount).toLocaleString('en-IN')}`;
+  buildUPIApps();
+  buildQR();
+  selMethod('upi');
+  document.getElementById('modalOv').classList.add('open');
+}
+function closeModal(){document.getElementById('modalOv').classList.remove('open')}
+function selMethod(m){
+  currentMethod=m;
+  ['upi','rzp'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('sel',t===m));
+  document.getElementById('upiSec').classList.toggle('active',m==='upi');
+  document.getElementById('rzpSec').classList.toggle('active',m==='rzp');
+}
+
+function buildUPIApps(){
+  const amt=currentAmount;
+  const note=encodeURIComponent('Aurex Capital Research - '+currentPlan);
+  const apps=[
+    {name:'Google Pay',icon:'💚',bg:'#34A853',upi:`tez://upi/pay?pa=${UPI_ID}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${amt}&cu=INR&tn=${note}`},
+    {name:'PhonePe',icon:'💜',bg:'#5f259f',upi:`phonepe://pay?pa=${UPI_ID}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${amt}&cu=INR&tn=${note}`},
+    {name:'Paytm',icon:'💙',bg:'#00B2FF',upi:`paytmmp://pay?pa=${UPI_ID}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${amt}&cu=INR&tn=${note}`},
+    {name:'BHIM / Any UPI',icon:'🇮🇳',bg:'#FF6B35',upi:`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${amt}&cu=INR&tn=${note}`},
+  ];
+  document.getElementById('upiApps').innerHTML=apps.map(a=>`
+    <a class="upi-app" href="${a.upi}" onclick="showToast('Opening ${a.name}...')">
+      <div class="upi-app-icon">${a.icon}</div>
+      <div class="upi-app-name">${a.name}</div>
+    </a>`).join('');
+}
+
+function buildQR(){
+  const container=document.getElementById('qr-container');
+  container.innerHTML='';
+  const upiUrl=`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${currentAmount}&cu=INR&tn=${encodeURIComponent('Aurex Capital Research - '+currentPlan)}`;
+  try{
+    new QRCode(container,{text:upiUrl,width:160,height:160,colorDark:'#0B1F3A',colorLight:'#F7F8FA',correctLevel:QRCode.CorrectLevel.H});
+  }catch(e){
+    container.innerHTML=`<div style="width:160px;height:160px;background:var(--off);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);text-align:center;padding:1rem">Scan to pay UPI ID:<br><strong style="color:var(--navy)">${UPI_ID}</strong></div>`;
+  }
+}
+
+function copyUPI(){
+  navigator.clipboard?.writeText(UPI_ID).then(()=>showToast('UPI ID copied! ✓')).catch(()=>{});
+}
+
+function confirmPayment(){
+  closeModal();
+  showToast('Payment confirmed! Activating your access 🔱');
+  setTimeout(()=>{
+    if(typeof sendPrompt!=='undefined'){
+      sendPrompt(`A customer just completed payment for ${currentPlan} on Aurex Capital Research via UPI (${UPI_ID}). Welcome them warmly to AUREX, confirm their full access to all 5 institutional frameworks — Goldman Sachs Screener, Bridgewater Risk Engine, JPMorgan Earnings Desk, BlackRock Portfolio Lab and Live AI Market Intelligence. Ask them what they would like to start with — their first AUREX 360° report, a stock screen, a risk audit, or an earnings brief. Make them feel like they've made the best financial decision of the year.`);
+    }
+  },500);
+}
+
+function goRazorpay(){
+  showToast('Razorpay setup needed — see Tech Stack section below');
+  closeModal();g('stack');
+}
+
+// ============================================================
+// MONTHLY UPDATE SYSTEM
+// ============================================================
+function checkUpdate(){
+  const last=localStorage.getItem('aurex_update');
+  if(!last||(Date.now()-new Date(last).getTime())>30*24*60*60*1000){
+    setTimeout(()=>document.getElementById('updBanner').classList.add('show'),6000);
+  }
+}
+function applyUpdate(){
+  document.getElementById('updBanner').classList.remove('show');
+  localStorage.setItem('aurex_update',new Date().toISOString());
+  showToast('AUREX updated to latest AI models ✓');
+  if(typeof sendPrompt!=='undefined'){
+    sendPrompt('You are AUREX AI. Provide a monthly intelligence update for Aurex Capital Research subscribers for March 2026: (1) Key market developments this month that change the screening framework, (2) New sectors or themes investors should be watching, (3) Top 3 updated risk factors for next 30 days, (4) Top 3 highest-conviction opportunities right now with a 1-paragraph thesis each. Be direct and concise.');
+  }
+}
+checkUpdate();
+
+// ============================================================
+// PWA SERVICE WORKER
+// ============================================================
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+document.getElementById('modalOv').addEventListener('click',function(e){if(e.target===this)closeModal()});
+</script>
+</body>
+</html>

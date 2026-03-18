@@ -1,0 +1,34 @@
+{
+  "functions": {
+    "api/chat.js": {
+      "maxDuration": 30
+    }
+  }
+}
+```
+
+Click **"Commit changes"**.
+
+---
+
+**Step 4 — Add your Anthropic API Key to Vercel**
+
+1. Go to **vercel.com** → your **aurex** project → **Settings** → **Environment Variables**
+2. Click **Add New**
+3. Name: `ANTHROPIC_API_KEY`
+4. Value: Your key from **console.anthropic.com** → API Keys (starts with `sk-ant-...`)
+5. Click **Save** → Vercel auto-redeploys
+
+---
+
+## After These 4 Steps
+
+Your GitHub repo should have:
+```
+AUREX/
+├── index.html       ✅ already there
+├── manifest.json    ✅ already there
+├── sw.js            ✅ already there
+├── vercel.json      ← add this
+└── api/
+    └── chat.js      ← add this
